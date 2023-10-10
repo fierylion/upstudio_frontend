@@ -23,8 +23,9 @@ const NavBar = () => {
          <div className='text-center flex flex-row  items-center'>
            <Image src={Logo} alt='logo' width={100} height={100} />
            <ul className='ml-2 flex flex-row space-x-4 '>
-             {sections.map((items) => (
+             {sections.map((items,ind) => (
                <li
+               key={ind}
                  className={clsx(
                    'hover:text-primary-600 cursor-pointer',
                    currentPage === items && 'text-primary-600'
