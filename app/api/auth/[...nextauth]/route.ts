@@ -49,6 +49,7 @@ export const authOptions: NextAuthOptions = {
     //   clientId: getGoogleCredentials().clientId,
     //   clientSecret: getGoogleCredentials().clientSecret,
     // }),
+
     CredentialsProvider({
       name: 'credentials',
       credentials: {
@@ -83,7 +84,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-
+  secret: process.env.SECRET,
   callbacks: {
    
     async jwt({ token, user }) {
