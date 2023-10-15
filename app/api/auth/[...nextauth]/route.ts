@@ -69,6 +69,7 @@ export const authOptions: NextAuthOptions = {
         }
         try {
           const response = await base.post('auth/login', data)
+          
           if (response.status === 200) {
             const user = response.data
             // login success
