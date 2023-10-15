@@ -72,7 +72,7 @@ const Login:FC<Props> = ({closeModal}) => {
     
     if (response?.error) {
       console.log(response.error, response)
-      toast.error('Email or password is incorrect')
+      toast.error(response.error)
 
     } else {
       console.log(response)

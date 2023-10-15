@@ -76,10 +76,10 @@ export const authOptions: NextAuthOptions = {
             return user
           }
         } catch (error: any) {
-          return null
+        throw new Error(error?.response?.data?.error)
         }
 
-        return null
+        throw new Error('Login failed')
       },
     }),
   ],
