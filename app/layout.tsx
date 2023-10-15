@@ -5,6 +5,7 @@ import StoreProvider from '@/context/StoreProvider'
 import SessionProvider from '@/context/SessionProvider'
 import ThemeProvider from '@/context/ThemeProvider'
 import ToastProvider from '@/context/ToastProvider'
+import QueryProvider from '@/context/QueryProvider'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -28,12 +29,12 @@ export default function RootLayout({
       >
         <SessionProvider>
           <ThemeProvider>
-            <StoreProvider>
-              <ToastProvider />
-              {children}
-            </StoreProvider>
+            <QueryProvider>
+              <StoreProvider>{children}</StoreProvider>
+            </QueryProvider>
           </ThemeProvider>
         </SessionProvider>
+        <ToastProvider />
       </body>
     </html>
   )

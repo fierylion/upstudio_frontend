@@ -1,2 +1,4 @@
 import NavBar from "./NavBar";
-export { NavBar };
+import SideBarNav from "./SideBarNav";
+import Spinner from "./single/Spinner";
+export { NavBar, Spinner };

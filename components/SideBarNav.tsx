@@ -1,16 +1,21 @@
 import React, {useEffect, FC, useRef, Ref} from 'react'
 import {motion,AnimatePresence} from 'framer-motion'
 import clsx from 'clsx';
+import Link from 'next/link'
+  type SectionType = {
+    label: string
+    url: string
+  }
 interface Props {
  closeSideNav:()=>void;
- sections: string[];
+ sections: SectionType[];
  currentPage:string;
- handleNavClick:(page:string)=>void;
+//  handleNavClick:(page:string)=>void;
 
  
 }
 
-const SideBarNav: FC<Props>= ({closeSideNav, sections, currentPage, handleNavClick}) => {
+const SideBarNav: FC<Props>= ({closeSideNav, sections, currentPage}) => {
  const sidebarRef = useRef<HTMLDivElement|null>()
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
@@ -39,40 +44,47 @@ const SideBarNav: FC<Props>= ({closeSideNav, sections, currentPage, handleNavCli
     },
     closed: {
       x: '-100%',
-      opacity: 0,
+    
+      
       transition: {
         type: 'spring',
         stiffness: 400,
-        damping: 40,
+        damping: 80,
+        
       },
     },
   }
   return (
     <div ref={sidebarRef as React.MutableRefObject<HTMLDivElement>}>
-      <AnimatePresence initial={false}>
-        <motion.div
-          className='fixed top-0 left-0 h-screen  w-44  bg-white z-50'
-          variants={sidebarVariants}
-          initial='closed'
-          animate='open'
-          exit='closed'
-        >
-          <div className='p-4 pt-14 space-y-5'>
-            {sections.map((item, ind) => (
+      <motion.div
+        className='fixed top-0 left-0 h-screen  w-44  bg-white z-50'
+        variants={sidebarVariants}
+        initial='closed'
+        animate='open'
+        exit='closed'
+      >
+        <div className='p-4 pt-14 space-y-5'>
+          {sections.map((item, ind) => (
+            <Link
+            href={item.url}
+            >
               <p
                 className={clsx(
                   'hover:text-primary-600 cursor-pointer',
-                  currentPage === item && 'text-primary-600'
+                  currentPage === item.url && 'text-primary-600'
                 )}
-                onClick={()=>handleNavClick(item)}
+                onClick={() => {
+                  // handleNavClick(item.label)
+                  closeSideNav()
+                }}
                 key={ind}
               >
-                {item}
+                {item.label}
               </p>
-            ))}
-          </div>
-        </motion.div>
-      </AnimatePresence>
+            </Link>
+          ))}
+        </div>
+      </motion.div>
     </div>
   )
 }

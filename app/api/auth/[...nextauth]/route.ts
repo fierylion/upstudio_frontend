@@ -1,12 +1,34 @@
-
-import { NextAuthOptions } from 'next-auth'
+import { SessionUser } from '@/lib/types'
+import { NextAuthOptions, User } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 import NextAuth from 'next-auth/next'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import GoogleProvider from 'next-auth/providers/google'
+import { base } from '@/lib/apis'
+import toast from 'react-hot-toast'
+// async function registerUser(data: LoginFieldTypes) {
+//   try {
+//     const response = await base.post('auth/login', data)
+//     return response.data
+//   } catch (error) {
+//     throw error
+//   }
+// }
+
+function getGoogleCredentials(){
+  if(process.env.GOOGLE_ID && process.env.GOOGLE_SECRET){
+    return {
+      clientId:process.env.GOOGLE_ID,
+      clientSecret:process.env.GOOGLE_SECRET
+    }
+  }
+  throw new Error('Google credentials not found')
+}
+
 
 async function refreshToken(token: JWT): Promise<JWT> {
   const res = await fetch(process.env.BACKEND_URL+ '/auth/refresh', {
-    method: 'POST',
+    method: 'GET',
     headers: {
       authorization: `Refresh ${token.backendTokens.refreshToken}`,
     },
@@ -23,46 +45,57 @@ async function refreshToken(token: JWT): Promise<JWT> {
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    // GoogleProvider({
+    //   clientId: getGoogleCredentials().clientId,
+    //   clientSecret: getGoogleCredentials().clientSecret,
+    // }),
     CredentialsProvider({
-      name: 'Credentials',
+      name: 'credentials',
       credentials: {
-        username: {
-          label: 'Username',
+        email: {
+          label: 'email',
           type: 'text',
-          placeholder: 'jsmith',
+          placeholder: 'jsmith@gmail.com',
         },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials, req) {
-        if (!credentials?.username || !credentials?.password) return null
-        const { username, password } = credentials
-        const res = await fetch(process.env.BACKEND_URL + '/auth/login', {
-          method: 'POST',
-          body: JSON.stringify({
-            username,
-            password,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-        if (res.status == 401) {
-          console.log(res.statusText)
+        if (!credentials || !credentials.email || !credentials.password)
+          return null
+        const data = {
+          email: credentials.email,
+          password: credentials.password,
+        }
+        try {
+          const response = await base.post('auth/login', data)
+          if (response.status === 200) {
+            const user = response.data
+            // login success
+            const responseUser: SessionUser = user
 
+            return user
+          }
+        } catch (error: any) {
           return null
         }
-        const user = await res.json()
-        return user
+
+        return null
       },
     }),
   ],
 
   callbacks: {
+   
     async jwt({ token, user }) {
-     
       if (user) return { ...token, ...user }
 
-      if (new Date().getTime() < token.backendTokens.expiresIn) return token
+      if (
+        new Date().getTime() <
+        new Date(Date.parse(token.backendTokens.accessExpiresIn)).getTime()
+      )
+    
+        return token
+      
 
       return await refreshToken(token)
     },
@@ -73,6 +106,9 @@ export const authOptions: NextAuthOptions = {
 
       return session
     },
+  },
+  pages: {
+    signIn: '/',
   },
 }
 
