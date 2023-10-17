@@ -65,23 +65,19 @@ const SideBarNav: FC<Props>= ({closeSideNav, sections, currentPage}) => {
       >
         <div className='p-4 pt-14 space-y-5'>
           {sections.map((item, ind) => (
-            <Link
-            href={item.url}
+            <p
+              className={clsx(
+                'hover:text-primary-600 cursor-pointer',
+                currentPage === item.url && 'text-primary-600'
+              )}
+              onClick={() => {
+                // handleNavClick(item.label)
+                closeSideNav()
+              }}
+              key={ind}
             >
-              <p
-                className={clsx(
-                  'hover:text-primary-600 cursor-pointer',
-                  currentPage === item.url && 'text-primary-600'
-                )}
-                onClick={() => {
-                  // handleNavClick(item.label)
-                  closeSideNav()
-                }}
-                key={ind}
-              >
-                {item.label}
-              </p>
-            </Link>
+              <Link href={item.url}>{item.label}</Link>
+            </p>
           ))}
         </div>
       </motion.div>

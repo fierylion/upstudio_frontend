@@ -15,6 +15,7 @@ import { getServerSession } from 'next-auth/next'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
 import {usePathname, useSearchParams} from 'next/navigation'
+import UserProfile from './UserProfile'
 
 // interface Props{
 //   page?:string,
@@ -72,20 +73,16 @@ const NavBar:FC = () => {
 
             <ul className='ml-2 flex flex-row space-x-4 '>
               {sections.map((items, ind) => (
-                <Link
-                href={items.url}
+                <li
+                  key={ind}
+                  className={clsx(
+                    'hover:text-primary-600 cursor-pointer',
+                    page === items.url && 'text-primary-600'
+                  )}
+                  // onClick={() => handleNavClick(items.label)}
                 >
-                  <li
-                    key={ind}
-                    className={clsx(
-                      'hover:text-primary-600 cursor-pointer',
-                      page === items.url && 'text-primary-600'
-                    )}
-                    // onClick={() => handleNavClick(items.label)}
-                  >
-                    {items.label}
-                  </li>
-                </Link>
+                  <Link href={items.url}>{items.label}</Link>
+                </li>
               ))}
             </ul>
           </div>
@@ -98,7 +95,7 @@ const NavBar:FC = () => {
                 <Button onClick={handleOpenRegister}>Create Account</Button>
               </>
             ) : (
-              <Button onClick={handleLogout}>Logout</Button>
+              <UserProfile name={'Daniel Mawalla'} />
             )}
           </div>
         </div>
@@ -112,14 +109,18 @@ const NavBar:FC = () => {
           />
           <Image src={Logo} alt='logo' width={100} height={100} />
           <div className='flex flex-row space-x-4 items-center'>
-            <p
+            <div
               className=' text-primary-600 hover:opacity-75 cursor-pointer '
               onClick={
-                status === 'unauthenticated' ? handleOpenLogin : handleLogout
+                status === 'unauthenticated' ? handleOpenLogin : () => {}
               }
             >
-              {status === 'unauthenticated' ? 'Login' : 'Logout'}
-            </p>
+              {status === 'unauthenticated' ? (
+                'Login'
+              ) : (
+                <UserProfile name='Daniel Mawalla' profileOnly={true} />
+              )}
+            </div>
           </div>
         </div>
       </div>
