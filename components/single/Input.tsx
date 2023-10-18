@@ -1,11 +1,11 @@
 import React, {HTMLInputTypeAttribute, InputHTMLAttributes, forwardRef} from 'react'
 import { VariantProps, cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
-const inputVariants = cva('  rounded', {
+const inputVariants = cva(' border-0  rounded outline-none', {
   variants: {
     variant: {
       default: 'border text-black focus:bg-white focus:border-2 placeholder:pl-2 place-holder:text-gray-500',
-      search: 'border text-black focus:bg-white focus:border-2',
+      search: ' focus:border-primary focus:border-2 text-gray-500  font-light ',
       search1: 'border text-black focus:bg-white focus:border-2',
     },
     sizeVariant: {

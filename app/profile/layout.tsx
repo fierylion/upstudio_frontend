@@ -15,6 +15,7 @@ import{FaXmark} from 'react-icons/fa6'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
    const sections: SectionType[] = [
+    {label:'Back Home', url:'/'},
      { label: 'My Account', url: '/profile' },
      { label: 'My Family', url: '/profile/family' },
      { label: 'Subscriptions', url: '/profile/subscriptions' },
@@ -97,7 +98,7 @@ const { data: session, status } = useSession()
         </div>
       </div>
 
-      <main>{children}</main>
+      <main className='w-full h-full'>{children}</main>
     </div>
   )
 }
@@ -171,7 +172,7 @@ const RightSideNav: FC<{
             initial='closed'
             animate='open'
             exit='closed'
-            className=' fixed right-0 w-48 h-screen bg-gray-300'
+            className=' fixed right-0 w-48 h-screen bg-gray-300 z-30'
             ref={sidebarRef}
           >
             <div>
