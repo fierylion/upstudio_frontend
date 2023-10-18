@@ -8,13 +8,20 @@ export interface User {
 
 
 }
-export interface SessionUser{
-  user:User;
+export interface SessionUser {
+  userDetails: {
+    _id: string
+    firstName: string
+    lastName: string
+    email: string
+    mobile: string
+    relationship: string
+  }
   backendTokens: {
-   accessToken: string;
-   refreshToken: string;
-   accessExpiresIn: string;
-   refreshExpiresIn: string;
-  };
-  error?:any;
- }
+    accessToken: string
+    refreshToken: string
+    accessExpiresIn: string
+    refreshExpiresIn: string
+  }
+  error?: any
+}

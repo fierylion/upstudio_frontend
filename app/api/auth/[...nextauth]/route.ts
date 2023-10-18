@@ -103,7 +103,7 @@ export const authOptions: NextAuthOptions = {
     },
 
     async session({ token, session }) {
-      session.user = token.user
+      session.userDetails = token.userDetails
       session.backendTokens = token.backendTokens
 
       return session

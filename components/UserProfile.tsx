@@ -74,7 +74,7 @@ const UserProfile:FC<Props> = ({name, profileOnly=false}) => {
                   }
                 }}
                 >
-                  <div className='flex flex-row items-center space-x-2 border-b py-2  hover:opacity-80'>
+                  <div className='flex flex-row items-center space-x-2 border-b py-4  hover:opacity-80'>
                     <item.Img className='w-4 h-4 text-gray-700' />
                     <h4 className='text-sm font-light  text-gray-700'>
                       {item.label}
