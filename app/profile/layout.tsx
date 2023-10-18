@@ -80,8 +80,8 @@ const { data: session, status } = useSession()
           <Image
             src={UserImage}
             alt='user'
-            width={30}
-            height={30}
+            width={40}
+            height={40}
             className='self-center'
           />
           <AnimatePresence>
