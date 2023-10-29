@@ -15,7 +15,12 @@ const Main:FC<Props> =async ({learnerID, learners, transactions}) => {
  let currentLearner = learners.find(learner=>learner.studentID===learnerID)
   
 
- 
+ const randomTransactions =transactions.length>0 ?Array(10)
+          .fill('')
+          .map(
+            (trn) =>
+              transactions[Math.floor(Math.random() * transactions.length)]
+          ): []
   return (
     <div className='mx-3'>
       <div className='m-3 my-5'>
@@ -30,13 +35,7 @@ const Main:FC<Props> =async ({learnerID, learners, transactions}) => {
       }
       { transactions.length>0 &&
       <div className='w-10/12 mx-auto'>
-        {Array(10)
-          .fill('')
-          .map(
-            (trn) =>
-              transactions[Math.floor(Math.random() * transactions.length)]
-          )
-          .map((transaction) => (
+        {randomTransactions.map((transaction) => (
             <SingleTransaction
               key={transaction._id}
               transaction={transaction}
