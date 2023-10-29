@@ -113,6 +113,7 @@ const PaymentModal:FC<{learners:LearnerType[], learnerID:string|null, lesson:Les
                 toast.success(data.message)
                  toast.remove('confirm-toast')
                 removeQueryParam('payment')
+                router.refresh()
 
               }
             } catch (error) {

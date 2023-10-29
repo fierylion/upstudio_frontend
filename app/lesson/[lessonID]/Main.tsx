@@ -103,7 +103,7 @@ const Main:FC<Props> = async ({lesson, learnerID, payment, currentUrl, lessonID,
 const courseIndexCompleted = subSubjectCompletionIndex()
 const paidLearners = learnersPaidByParent?.find((lp)=>{
 
-  console.log(lp.learner.studentID, learnerID, 'fadfa')
+ 
   return lp.learner.studentID===learnerID})
 
   return (

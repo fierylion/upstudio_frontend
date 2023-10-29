@@ -12,4 +12,4 @@ export const base = axios.create({
 })
 
 export const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
-export const baseWsUrl = `ws://${baseUrl?.split('://')[1]}`
+export const baseWsUrl = `wss://${baseUrl?.split('://')[1]}/ws/`
