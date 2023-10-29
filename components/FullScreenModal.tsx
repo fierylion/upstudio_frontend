@@ -36,7 +36,7 @@ const FullScreenModal:FC<Props> = ({children, closeModal}) => {
     exit={{opacity:0}}
 
    
-   className=' absolute w-full h-screen overflow-y-scroll inset-0 bg-black bg-opacity-50 ' ref={modalRef}>
+   className=' absolute w-full h-screen overflow-y-scroll inset-0 bg-black bg-opacity-50 z-50 ' ref={modalRef}>
     {children}
    </motion.div>
 

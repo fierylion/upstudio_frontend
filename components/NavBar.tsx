@@ -16,6 +16,9 @@ import toast from 'react-hot-toast'
 import Link from 'next/link'
 import {usePathname, useSearchParams} from 'next/navigation'
 import UserProfile from './UserProfile'
+import { useAppSelector } from '@/store/hooks'
+import { setUserDetails } from '@/store/reducers/userDetailsReducer'
+import { imageUrl } from '@/lib/utils'
 
 // interface Props{
 //   page?:string,
@@ -24,6 +27,8 @@ import UserProfile from './UserProfile'
 const NavBar:FC = () => {
   const page = usePathname()
   const query = useSearchParams()
+  const userDetails = useAppSelector(state=>state.userDetails.userDetails)
+
 
   //authorize
   type SectionType = {
@@ -63,13 +68,20 @@ const NavBar:FC = () => {
   const handleOpenRegister = () => {
     setOpenRegister(!openRegister)
   }
+  const register = useSearchParams().get('register')
   return (
-    <div className=' fixed top-0 inset-x-0'>
+    <div className=' fixed top-0 inset-x-0 z-10'>
       {/* for large devices */}
       <div className='hidden md:block'>
         <div className='p-3 py-4 flex flex-row justify-between bg-white'>
           <div className='text-center flex flex-row  items-center'>
-            <Image src={Logo} alt='logo' width={100} height={100} />
+            <Image
+              src={Logo}
+              alt='logo'
+              width={100}
+              height={100}
+              className={' rounded-full'}
+            />
 
             <ul className='ml-2 flex flex-row space-x-4 '>
               {sections.map((items, ind) => (
@@ -95,7 +107,7 @@ const NavBar:FC = () => {
                 <Button onClick={handleOpenRegister}>Create Account</Button>
               </>
             ) : (
-              <UserProfile name={'Daniel Mawalla'} />
+              <UserProfile name={userDetails.firstName+' '+userDetails.lastName} />
             )}
           </div>
         </div>
@@ -107,10 +119,16 @@ const NavBar:FC = () => {
             className='w-5 h-5 text-primary-600 hover:opacity-80'
             onClick={() => setOpenSideNav(true)}
           />
-          <Image src={Logo} alt='logo' width={100} height={100} />
+          <Image
+            src={Logo}
+            alt='logo'
+            width={100}
+            height={100}
+            className='rounded-full'
+          />
           <div className='flex flex-row space-x-4 items-center'>
             <div
-              className=' text-primary-600 hover:opacity-75 cursor-pointer '
+              className=' text-primary-600 cursor-pointer '
               onClick={
                 status === 'unauthenticated' ? handleOpenLogin : () => {}
               }
@@ -118,7 +136,10 @@ const NavBar:FC = () => {
               {status === 'unauthenticated' ? (
                 'Login'
               ) : (
-                <UserProfile name='Daniel Mawalla' profileOnly={true} />
+                <UserProfile
+                  name={userDetails.firstName + ' ' + userDetails.lastName}
+                  profileOnly={true}
+                />
               )}
             </div>
           </div>
@@ -135,7 +156,12 @@ const NavBar:FC = () => {
         )}
       </AnimatePresence>
       <AnimatePresence>
-        {openLogin && <Login closeModal={handleOpenLogin} />}
+        {(openLogin || register) && (
+          <Login
+            closeModal={handleOpenLogin}
+            openRegister={handleOpenRegister}
+          />
+        )}
         {openRegister && <Register closeModal={handleOpenRegister} />}
       </AnimatePresence>
     </div>

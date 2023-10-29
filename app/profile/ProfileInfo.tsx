@@ -14,6 +14,10 @@ import toast from 'react-hot-toast'
 import { User } from '@/lib/types'
 import { useSession } from 'next-auth/react'
 import {motion} from 'framer-motion'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { imageUrl } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
+import { setUserDetails } from '@/store/reducers/userDetailsReducer'
 interface ProfileFieldTypes {
   firstName: string
   lastName: string
@@ -51,24 +55,49 @@ const shema = yup
       .required('Please provide your relationship to learner'),
   })
   .required()
-  async function changeUserDetails(data: ProfileFieldTypes) {
+  async function changeUserDetails(data: ProfileFieldTypes, token:string) {
     try {
-      const response = await base.post('user/editProfile', data)
+      const response = await base.patch('user', data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      
+      })
       return response.data
     } catch (error) {
       throw error
     }
   }
+
+async function updateUserImage(img:File, token:string){
+  try {
+    const formData = new FormData()
+    formData.append('img', img)
+    const response = await base.post('/user/image', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    
+    })
+    return response.data
+  } catch (error:any) {
+    
+    toast.error(error?.response?.data?.error || 'Something went wrong')
+    return null
+  }
+}
 const ProfileInfo = () => {
+   const dispatch = useAppDispatch()
  
 const { data: session, status } = useSession()
-  const {mutate, isLoading} = useMutation(changeUserDetails, {
+  const {mutate, isLoading} = useMutation( (data:ProfileFieldTypes)=>changeUserDetails(data, session?.backendTokens.accessToken as string), {
     onMutate:()=>{
-      // toast.loading('Signing In...', {id:'loading-toast'})
+      // toast.loading('Updating Details', {id:'loading-toast'})
     },
     onSuccess: (data) => {
       const user:User = data.user
-      toast.success(`Success!!!`)
+      dispatch(setUserDetails({type:'USER_DETAILS', data:user}))
+      // toast.success(`Success!!!`)
     
     },
     onError: (error : {response:{data:{error:string}}}) => {
@@ -82,14 +111,18 @@ const { data: session, status } = useSession()
   //submit
   const onSubmit = (data: ProfileFieldTypes) => {
   console.log(data)
+  mutate(data)
 
   }
+  const userDetails = useAppSelector(state=>state.userDetails.userDetails)
+ 
+
   const defaultValues = {
-   firstName:session?.userDetails.firstName,
-   lastName: session?.userDetails.lastName,
-   email: session?.userDetails.email,
-   mobile:session?.userDetails.mobile,
-   relationship:session?.userDetails.relationship
+   firstName:userDetails.firstName,
+   lastName: userDetails.lastName,
+   email: userDetails.email,
+   mobile:userDetails.mobile,
+   relationship:userDetails.relationship
   }
   const {
     register,
@@ -104,16 +137,25 @@ const { data: session, status } = useSession()
 
    React.useEffect(() => {
      if (session) {
+
        // Use the setValue function to set default values asynchronously
-       setValue('firstName', session.userDetails.firstName)
-       setValue('lastName', session.userDetails.lastName)
-       setValue('email', session.userDetails.email)
-       setValue('mobile', session.userDetails.mobile)
-       setValue('relationship', session.userDetails.relationship)
+       setValue('firstName', userDetails.firstName)
+       setValue('lastName', userDetails.lastName)
+       setValue('email', userDetails.email)
+       setValue('mobile', userDetails.mobile)
+       setValue('relationship', userDetails.relationship)
      }
-   }, [session, setValue])
-  const uploadImage = (image:File)=>{
-   console.log('uploading image', image)
+   }, [session, setValue, userDetails])
+
+   const router = useRouter()
+  const uploadImage =async (image:File)=>{
+    // toast.loading('Uploading Image...', {id:'loading-image-toast'})
+    const val = await updateUserImage(image, session?.backendTokens.accessToken as string)
+
+    // toast.remove('loading-image-toast')
+    // val && toast.success('Image Uploaded')
+    dispatch(setUserDetails({type:'USER_DETAILS', data:val.user}))
+    
   }
   const uploadRef = React.useRef<HTMLInputElement|null>(null)
 
@@ -129,11 +171,11 @@ const { data: session, status } = useSession()
     className=' mx-auto w-full '>
       <div className='mt-10 w-fit mx-auto'>
         <Image
-          src={UserImage}
+          src={imageUrl(userDetails.img)}
           alt='Profile Picture'
           width={100}
           height={100}
-          className='mb-2'
+          className='mb-2 w-24 h-24 rounded-full'
         />
         <div className='flex flex-col items-center'>
           <input
@@ -257,7 +299,7 @@ const { data: session, status } = useSession()
               {isLoading ? (
                 <Spinner className='mx-auto text-center' />
               ) : (
-                'Register'
+                'Update'
               )}
             </Button>
           </div>

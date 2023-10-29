@@ -14,6 +14,8 @@ import {motion, AnimatePresence} from 'framer-motion'
 import{FaXmark} from 'react-icons/fa6'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
+import { useAppSelector } from '@/store/hooks'
+import { imageUrl } from '@/lib/utils'
    const sections: SectionType[] = [
     {label:'Back Home', url:'/'},
      { label: 'My Account', url: '/profile' },
@@ -24,47 +26,44 @@ import clsx from 'clsx'
 
 const ProfileLayout:FC<{children:React.ReactNode}> = ({children}) => {
   const currentUrl = usePathname()
-
-
-const { data: session, status } = useSession()
+  const userDetails = useAppSelector(state=>state.userDetails.userDetails)
  
 
   return (
-    <div className='md:flex '>
+    <div className='md:flex relative'>
       {/* shown for large devices */}
-      <div className='hidden md:block  w-80 lg:w-1/3 h-screen  bg-gray-300 '>
-        <div>
+      <aside className='hidden md:block  w-80 lg:w-1/3 h-screen  bg-gray-300 sticky top-0 '>
+        <div className=''>
           {/* profile */}
           <div className='w-full flex flex-col items-center py-8 space-y-3'>
             <Image
-              src={UserImage}
+              src={imageUrl(userDetails.img)}
               alt='Profile Picture'
               width={100}
               height={100}
-              className='rounded-full'
+              className='rounded-full w-24 h-24'
             />
             <h1 className='font-medium text-xl'>
-              {session?.userDetails?.firstName +
-                ' ' +
-                session?.userDetails?.lastName}
+              {userDetails.firstName + ' ' + userDetails.lastName}
             </h1>
           </div>
           {/* sections */}
           <div className='border-2  flex flex-col items-center py-8 '>
             <ul className='space-y-6 font-normal text-gray-800'>
               {sections.map((item, ind) => {
-                    const isCurrent = item.url === currentUrl
+                const isCurrent = item.url === currentUrl
                 return (
                   <li
                     key={ind}
                     className={clsx(
-                      'hover:text-primary-600',
+                      'hover:text-primary-600 ',
                       isCurrent && 'text-primary-600'
                     )}
                   >
                     <Link href={item.url}>{item.label}</Link>
                   </li>
-                )})}
+                )
+              })}
             </ul>
           </div>
           {/* logout */}
@@ -73,13 +72,13 @@ const { data: session, status } = useSession()
             <MdLogout className='w-6 h-6 ' />
           </div>
         </div>
-      </div>
+      </aside>
 
       {/* shown on small devices */}
       <div className='md:hidden w-full  h-14 bg-gray-300 '>
         <div className='flex flex-row justify-between my-auto items-center  h-full px-5'>
           <Image
-            src={UserImage}
+            src={imageUrl(userDetails.img)}
             alt='user'
             width={40}
             height={40}
@@ -87,18 +86,14 @@ const { data: session, status } = useSession()
           />
           <AnimatePresence>
             <RightSideNav
-            currentUrl={currentUrl}
-              name={
-                session?.userDetails?.firstName +
-                ' ' +
-                session?.userDetails?.lastName
-              }
+              currentUrl={currentUrl}
+              name={userDetails.firstName + ' ' + userDetails.lastName}
             />
           </AnimatePresence>
         </div>
       </div>
 
-      <main className='w-full h-full'>{children}</main>
+      <main className='w-full h-full flex-grow '>{children}</main>
     </div>
   )
 }

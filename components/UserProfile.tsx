@@ -7,6 +7,8 @@ import {AiOutlineQuestionCircle} from 'react-icons/ai'
 import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
 import {signOut} from 'next-auth/react'
+import { useAppSelector } from '@/store/hooks'
+import { imageUrl } from '@/lib/utils'
 
 interface Props{
  name:string
@@ -21,6 +23,7 @@ interface SectionsTypes{
 const UserProfile:FC<Props> = ({name, profileOnly=false}) => {
  const [openProfile, setOpenProfile] = useState<boolean>(false)
  const [isOpenSideNav, setIsOpenSideNav] = useState<boolean>(false)
+ const userDetails = useAppSelector(state=>state.userDetails.userDetails)
  const sections: SectionsTypes[] = [
    { label: 'View Profile', Img: FiUser, url: '/profile' },
    {
@@ -46,7 +49,7 @@ const UserProfile:FC<Props> = ({name, profileOnly=false}) => {
       }}
     >
       <div className='flex flex-row  space-x-4 items-center'>
-        <Image src={UserIcon} alt='user' width={30} height={30} />
+        <Image src={imageUrl(userDetails.img)} alt='user' width={30} height={30} className='w-10 h-10 rounded-full' />
         {!profileOnly && (
           <div className=' flex flex-row items-center'>
             <p className='text-sm font-semibold opacity-90'>{name}</p>
@@ -65,16 +68,16 @@ const UserProfile:FC<Props> = ({name, profileOnly=false}) => {
               
               return (
                 <Link
-                href={item.url}
-                key={item.label}
-                target={item.label === 'WhatsApp Us' ? '_blank' : '_self'}
-                onClick={()=>{
-                  if(item.label === 'Logout'){
-                    signOut()
-                  }
-                }}
+                  href={item.url}
+                  key={item.label}
+                  target={item.label === 'WhatsApp Us' ? '_blank' : '_self'}
+                  onClick={() => {
+                    if (item.label === 'Logout') {
+                      signOut()
+                    }
+                  }}
                 >
-                  <div className='flex flex-row items-center space-x-2 border-b py-4  hover:opacity-80'>
+                  <div className='flex flex-row items-center space-x-2 border-b py-4  hover:opacity-80 hover:scale-105'>
                     <item.Img className='w-4 h-4 text-gray-700' />
                     <h4 className='text-sm font-light  text-gray-700'>
                       {item.label}
@@ -133,7 +136,7 @@ const RightSideNav: FC<{sections:SectionsTypes[],closeSideNav:()=>void}> = ({ se
   return (
     <div ref={sidebarRef as React.MutableRefObject<HTMLDivElement>}>
       <motion.div
-        className='fixed right-0 mt-6 h-screen  w-44  bg-white'
+        className='fixed right-0 mt-4 h-screen  w-44  bg-white'
         variants={sidebarVariants}
         initial='closed'
         animate='open'
@@ -151,7 +154,7 @@ const RightSideNav: FC<{sections:SectionsTypes[],closeSideNav:()=>void}> = ({ se
                 }
               }}
             >
-              <div className='flex flex-row items-center space-x-2 border-b py-4  hover:opacity-80'>
+              <div className='flex flex-row items-center space-x-2 border-b py-4  hover:opacity-80 hover:scale-105'>
                 <item.Img className='w-4 h-4 text-gray-700' />
                 <h4 className='text-sm font-light  text-gray-700'>
                   {item.label}

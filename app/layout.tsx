@@ -6,6 +6,11 @@ import SessionProvider from '@/context/SessionProvider'
 import ThemeProvider from '@/context/ThemeProvider'
 import ToastProvider from '@/context/ToastProvider'
 import QueryProvider from '@/context/QueryProvider'
+import ProgressBarProvider from '@/context/ProgressBarProvider'
+import UserDetails from '@/DefaultComponents/UserDetails'
+
+
+
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -30,10 +35,15 @@ export default function RootLayout({
         <SessionProvider>
           <ThemeProvider>
             <QueryProvider>
-              <StoreProvider>{children}</StoreProvider>
+              <StoreProvider>{children}
+              
+              <UserDetails />
+              </StoreProvider>
             </QueryProvider>
           </ThemeProvider>
+
         </SessionProvider>
+        <ProgressBarProvider />
         <ToastProvider />
       </body>
     </html>

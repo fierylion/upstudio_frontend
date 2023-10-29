@@ -15,6 +15,8 @@ import toast from 'react-hot-toast'
 import { User } from '@/lib/types'
 import { Spinner } from '@/components'
 import { signIn } from 'next-auth/react'
+import CustomSelect from '@/components/single/CustomSelect'
+import { setEnvironmentData } from 'worker_threads'
 interface Props{
   closeModal: ()=>void
 }
@@ -95,8 +97,10 @@ const Register:FC<Props> = ({closeModal}) => {
     setIsLoading(true)
        try {
          const registerUser = await base.post('auth/register', data)
+    
 
        } catch (error:any) {
+       
          toast.error(`Error: ${error?.response?.data?.error}` )
          setIsLoading(false)
           return
@@ -118,10 +122,11 @@ const Register:FC<Props> = ({closeModal}) => {
     }
     setIsLoading(false)
   }
-  const {register, handleSubmit, formState:{errors}} = useForm<RegisterFieldTypes>({
+  const {register, handleSubmit,setValue, watch, formState:{errors}} = useForm<RegisterFieldTypes>({
     resolver:yupResolver(shema),
     mode:'onChange'
   })
+  const relatives = ['Father', 'Mother', 'Sister', 'Cousin', 'Brother', 'Uncle', 'Aunt', 'Others']
   return (
     <FullScreenModal>
       <div className='w-full flex justify-center pb-10 '>
@@ -247,7 +252,26 @@ const Register:FC<Props> = ({closeModal}) => {
                       )}
                     </div>
                   </div>
-                  <div className='col-span-2'>
+                <div className='col-span-2'>
+                    <div className='flex flex-col'>
+                      <label
+                        htmlFor='relationship'
+                        className='mb-1  font-light'
+                      >
+                        Relationship to Learner
+                      </label>
+                      <CustomSelect
+                      items={relatives}
+                      placeholder='Select your relationship to learner'
+                      setValue={(val)=>{
+                        setValue('relationship', val, { shouldValidate: true, shouldDirty: true }) 
+                      }}
+                      value={watch('relationship')}
+                      
+                      />
+                  </div>
+                  </div>
+                  {/* <div className='col-span-2'>
                     <div className='flex flex-col'>
                       <label
                         htmlFor='relationship'
@@ -266,7 +290,7 @@ const Register:FC<Props> = ({closeModal}) => {
                         </span>
                       )}
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className='text-center'>

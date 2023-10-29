@@ -15,12 +15,15 @@ import { base } from '@/lib/apis'
 import { SessionUser, User } from '@/lib/types'
 import { Spinner } from '@/components'
 import {signIn} from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 interface LoginFieldTypes{
   email:string
   password:string
 }
 interface Props{
   closeModal: ()=>void
+  openRegister: ()=>void
 }
 interface LoginFieldTypes{
   email:string
@@ -40,7 +43,7 @@ const schema = yup.object({
 async function loginUser(data: LoginFieldTypes) {
 
 }
-const Login:FC<Props> = ({closeModal}) => {
+const Login:FC<Props> = ({closeModal, openRegister}) => {
     // const { mutate, isLoading } = useMutation(loginUser, {
     //   onMutate: () => {
     //     // toast.loading('Registering...', {id:'loading-toast'})
@@ -59,6 +62,24 @@ const Login:FC<Props> = ({closeModal}) => {
     //     // toast.remove('loading-toast')
     //   },
     // })
+
+      const router = useRouter()
+      const pathname = usePathname()
+      const query = useSearchParams().toString()
+      // console.log(query)
+
+      const removeQueryParam = (param: string) => {
+        const params = new URLSearchParams(query)
+      
+        if (params.has(param)){
+      
+        params.delete(param)
+        router.replace(pathname + '?' + params.toString())
+        }
+           
+        return 
+
+      }
     const [isLoading, setIsLoading] = useState<boolean>(false)
    const onSubmit = async (data: LoginFieldTypes) => {
     setIsLoading(true)
@@ -68,6 +89,8 @@ const Login:FC<Props> = ({closeModal}) => {
       email: data.email,
       password: data.password,
     })
+
+    
    
     
     if (response?.error) {
@@ -77,7 +100,15 @@ const Login:FC<Props> = ({closeModal}) => {
     } else {
       console.log(response)
        toast.success(`Welcome to upstudio`)
-      closeModal()
+       closeModal()
+      
+    if(pathname.includes('lesson')){
+      console.log('entered..')
+      removeQueryParam('register')
+      router.refresh()
+       }
+       
+
     }
     setIsLoading(false)
    }
@@ -89,6 +120,9 @@ const Login:FC<Props> = ({closeModal}) => {
     resolver: yupResolver(schema),
     mode: 'onChange',
   })
+
+  
+
   return (
     <FullScreenModal>
       <div className='w-full flex justify-center pb-10 '>
@@ -156,16 +190,26 @@ const Login:FC<Props> = ({closeModal}) => {
               <div className='text-center mt-4'>
                 <Link
                   href='#'
-                  className='text-primary-500 text-xs font-medium mt-2 underline'
+                  className='text-primary-500 text-xs font-medium mt-2 underline z-50'
                 >
                   Forgot Password?
                 </Link>
+                <div className='py-4 font-bold text-primary truncate-wider hover:opacity-75 cursor-pointer ' onClick={()=>{
+                  closeModal()
+                  openRegister()
+                }}>
+                  Create an account?{' '}
+                </div>
               </div>
+
             </form>
           </div>
           <AiOutlineClose
             className='absolute top-4 right-2 text-black w-6 h-6 hover:text-primary-500 cursor-pointer'
-            onClick={closeModal}
+            onClick={()=>{ 
+              
+              removeQueryParam('register')
+              closeModal()}}
           />
         </div>
       </div>
