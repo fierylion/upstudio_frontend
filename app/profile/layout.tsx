@@ -82,7 +82,7 @@ const ProfileLayout:FC<{children:React.ReactNode}> = ({children}) => {
             alt='user'
             width={40}
             height={40}
-            className='self-center'
+            className='self-center rounded-full w-10 h-10'
           />
           <AnimatePresence>
             <RightSideNav
