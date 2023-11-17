@@ -4,5 +4,6 @@ interface Props {
   children: React.ReactNode;
 }
 export default function Provider({ children }: Props) {
-  return <ThemeProvider attribute="class">{children}</ThemeProvider>;
+  return <ThemeProvider attribute="class" defaultTheme="light"
+>{children}</ThemeProvider>;
 }

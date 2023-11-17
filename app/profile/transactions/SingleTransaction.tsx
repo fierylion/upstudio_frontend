@@ -7,6 +7,7 @@ interface Props{
   learnerID:string
 }
 const SingleTransaction: FC<Props> = ({transaction, learnerID}) => {
+  console.log(transaction)
   const status = transaction.paymentID.success
   return (
     <div className='w-full rounded p-2 flex flex-row justify-between text-gray-800 py-4 border-b'>
